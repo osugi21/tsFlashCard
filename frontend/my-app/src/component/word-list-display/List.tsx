@@ -2,7 +2,9 @@ import React from 'react'
 
 function List() {
   return (
-    <div>List</div>
+    <div>
+      単語・答え<button>編集</button><button>削除</button>
+    </div>
   )
 }
 
