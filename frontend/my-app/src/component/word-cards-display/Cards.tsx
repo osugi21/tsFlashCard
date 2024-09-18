@@ -4,7 +4,6 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
 
-
 function Cards() {
 const [clickCardLength, setClickCardLength] = useState(0)
 
@@ -21,7 +20,7 @@ const [clickCardLength, setClickCardLength] = useState(0)
             justifyContent: 'center',   
             alignItems: 'center',       
             height: '100%',   
-            textAlign: 'left',          
+            textAlign: 'left'         
           }}>
             
       <Typography gutterBottom sx={{ 
@@ -29,7 +28,7 @@ const [clickCardLength, setClickCardLength] = useState(0)
             fontSize: 22, 
             wordWrap: 'break-word',
             whiteSpace: 'normal', 
-            maxWidth: '100%', }}>
+            maxWidth: '100%' }}>
            {clickCardLength %2 === 0
            ? "問題（単語）"
            : "答え"
