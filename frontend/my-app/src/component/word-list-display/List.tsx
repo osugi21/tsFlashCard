@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
 type ListItem = {
   wordText:string;
@@ -23,6 +24,12 @@ function List() {
     setList([...list,{wordText:word, answerText:answer}])
     setWord('')
     setAnswer('')
+    axios.post('http://localhost:5000/post',{
+      word:word,
+      answer:answer
+    })
+    .then(response => console.log('POSTリクエストが成功しました。',response.data))
+    .catch(error => console.log('POSTリクエストが成功しました。',error))
     console.log(list)
   }
 

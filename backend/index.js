@@ -22,8 +22,8 @@ const db = mysql.createConnection({
 
 app.post('/post', (req, res) => {
     const { file , id, word, answer } = req.body;
-    const sql = 'INSERT INTO users (file , id, word, answer) VALUES (?, ?, ?, ?)';
-    db.query(sql, [file , id, word, answer], (err, result) => {
+    const sql = 'INSERT INTO users (file , id, word, answer) VALUES (?, ?)';
+    db.query(sql, [word, answer], (err, result) => {
       if (err) {
         console.error('データ挿入中にエラーが発生しました:', err);
         res.status(500).send('サーバーエラー');
