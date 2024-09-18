@@ -21,17 +21,30 @@ const db = mysql.createConnection({
 })
 
 app.post('/post', (req, res) => {
-    const { file , id, word, answer } = req.body;
-    const sql = 'INSERT INTO users (file , id, word, answer) VALUES (?, ?)';
+    const {word, answer } = req.body;
+    const sql = 'INSERT INTO users (word, answer) VALUES (?, ?)';
     db.query(sql, [word, answer], (err, result) => {
       if (err) {
         console.error('データ挿入中にエラーが発生しました:', err);
         res.status(500).send('サーバーエラー');
       } else {
-        res.json({file , id, word, answer});
+        res.json({ id: result.insertId, word, answer});
       }
     });
   });
+
+  app.post('/delete',(req,res) => {
+    const{ id } = req.body;
+    const sql = 'DELETE FROM users WHERE id = ?';
+    db.query(sql, [id], (err, result) => {
+      if (err) {
+        console.error('データ削除中にエラーが発生しました:', err);
+        res.status(500).send('サーバーエラー');
+      } else {
+        res.json({id});
+      }
+    });
+  })
 
 
 app.post('/',(req,res) => {

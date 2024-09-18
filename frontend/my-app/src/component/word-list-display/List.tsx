@@ -2,15 +2,30 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 type ListItem = {
-  wordText:string;
+  id:number;
+wordText:string;
   answerText:string;
 }
 
 function List() {
   const [word, setWord] = useState<string>('')
   const [answer, setAnswer] = useState<string>('')
-  const [list, setList] = useState<ListItem[]>([{wordText:'単語', answerText:'答え'}])
+  const [list, setList] = useState<ListItem[]>([{id:0 ,wordText:'単語', answerText:'答え'}])
   const [deleteWord, setDeleteWord] = useState(false)
+
+
+useEffect(()=> {
+  axios.post('http://localhost:5000/')
+  .then(response => setList(response.data.map((item: any)=>({
+    id: item.id,
+    wordText: item.word,
+    answerText: item.answer,
+  }),
+  console.log('deleteのPOSTリクエストが成功しました。',response.data)))
+)
+  .catch(error => console.error('データ取得に失敗しました', error))
+},[])
+
 
   const inputWordText =(e: { target: { value: React.SetStateAction<string>; }; }) =>{
     setWord(e.target.value)
@@ -20,22 +35,30 @@ function List() {
     setAnswer(e.target.value)
   }
 
-  const handleAddClick = () => {
-    setList([...list,{wordText:word, answerText:answer}])
-    setWord('')
-    setAnswer('')
+  const handleAddClick = () => {  
     axios.post('http://localhost:5000/post',{
       word:word,
       answer:answer
     })
-    .then(response => console.log('POSTリクエストが成功しました。',response.data))
-    .catch(error => console.log('POSTリクエストが成功しました。',error))
-    console.log(list)
+    .then(response => {
+      setList([...list, { id: response.data.id, wordText: word, answerText: answer }]);
+      setWord('');
+      setAnswer('');
+    })
+    .catch(error => console.log('POSTリクエストが失敗しました。',error))
   }
 
-  const handleDeleteClick = (indexDelete:number) => {
-    const newList = list.filter((_,index) => index !== indexDelete)
-    setList(newList)
+  const handleDeleteClick = (id: number,indexDelete:number) => {
+    axios.post('http://localhost:5000/delete',{
+      id: id
+    })
+    
+    
+    .then(response => {
+      const newList = list.filter((_,index) => index !== indexDelete)
+      setList(newList)
+      console.log('deleteのPOSTリクエストが成功しました。',response.data)})
+    .catch(error => console.log('deleteのPOSTリクエストが成功しました。',error))
   }
 
   return (
@@ -50,7 +73,7 @@ function List() {
         {list.map((item, index)=> (
           <li key={index}>
              Q: {item.wordText} - A: {item.answerText}
-             <button onClick={() => handleDeleteClick(index)}>削除</button>
+             <button onClick={() => handleDeleteClick(item.id,index)}>削除</button>
           </li>
         ))}
       </ul>
