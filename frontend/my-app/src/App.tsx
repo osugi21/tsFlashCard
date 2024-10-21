@@ -6,7 +6,7 @@ import List from "./component/word-list-display/List";
 import axios from "axios";
 
 const res = axios
-  .get("http://localhost:5000/")
+  .post("http://localhost:5000/")
 
   .then((res) => console.log("成功"))
 
@@ -18,7 +18,7 @@ function App() {
       <BrowserRouter>
         <Link to="/">Home</Link> | <Link to="/edit">Edit</Link>
         <Routes>
-          <Route path="/" element={<Cards id={0} word={""} answer={""}/>} />
+          <Route path="/" element={<Cards class={"未分類"} id={0} word={""} answer={""}/>} />
           <Route path="/edit" element={<List />} />
         </Routes>
       </BrowserRouter>

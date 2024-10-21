@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { typographyClasses } from "@mui/material";
 
 type ListItem = {
-  id: number;
-  word: string;
-  answer: string;
-};
-
-type DbListItem = {
-  class: null;
+  class: string;
   id: number;
   word: string;
   answer: string;
@@ -19,7 +12,7 @@ function List() {
   const [wordText, setWordText] = useState<string>("");
   const [answerText, setAnswerText] = useState<string>("");
   const [list, setList] = useState<ListItem[]>([
-    { id: 0, word: "単語", answer: "答え" },
+    { class: "未分類", id: 0, word: "単語", answer: "答え" },
   ]);
 
   useEffect(() => {
@@ -31,10 +24,7 @@ function List() {
           // .reduce((acc: { word: string; answer: string }[], item: ListItem) => {
           //   acc[item.id] = { word: item.wordText, answer: item.answerText };
           // })
-          .filter(
-            (item: ListItem) =>
-              item.id && item.word && item.answer
-          );
+          .filter((item: ListItem) => item.id && item.word && item.answer);
         // .map((item: ListItem) => ({
         //   id: item.id,
         //   wordText: item.wordText,
@@ -91,7 +81,12 @@ function List() {
       .then((response) => {
         setList([
           ...list,
-          { id: response.data.id, word: wordText, answer: answerText },
+          {
+            class: "未分類",
+            id: response.data.id,
+            word: wordText,
+            answer: answerText,
+          },
         ]);
         setWordText("");
         setAnswerText("");
