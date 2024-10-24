@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+.button {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+}
+
+.card {
+  position: relative;
+  padding-bottom: 3rem;
+}
+
+.reset-button {
+  position: center;
+}

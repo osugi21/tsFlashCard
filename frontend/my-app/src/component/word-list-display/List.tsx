@@ -1,84 +1,106 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 type ListItem = {
-  id:number;
-wordText:string;
-  answerText:string;
-}
+  category: string;
+  id: number;
+  word: string;
+  answer: string;
+};
 
 function List() {
-  const [word, setWord] = useState<string>('')
-  const [answer, setAnswer] = useState<string>('')
-  const [list, setList] = useState<ListItem[]>([{id:0 ,wordText:'単語', answerText:'答え'}])
-  const [deleteWord, setDeleteWord] = useState(false)
+  const [wordText, setWordText] = useState<string>("");
+  const [answerText, setAnswerText] = useState<string>("");
+  const [list, setList] = useState<ListItem[]>([
+    { category: "未分類", id: 0, word: "単語", answer: "答え" },
+  ]);
 
+  useEffect(() => {
+    axios
+      .post("http://localhost:5000/")
+      .then((response) => {
+        console.log("レスポンスデータ", response.data);
+        const filteredList: ListItem[] = response.data.filter(
+          (item: ListItem) => item.id && item.word && item.answer
+        );
+        console.log(filteredList);
+        setList(filteredList);
+      })
+      .catch((error) => console.error("データ取得に失敗しました", error));
+  }, []);
 
-useEffect(()=> {
-  axios.post('http://localhost:5000/')
-  .then(response => setList(response.data.map((item: any)=>({
-    id: item.id,
-    wordText: item.word,
-    answerText: item.answer,
-  }),
-  console.log('deleteのPOSTリクエストが成功しました。',response.data)))
-)
-  .catch(error => console.error('データ取得に失敗しました', error))
-},[])
+  const inputWordText = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setWordText(e.target.value);
+  };
 
+  const inputAnswerText = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setAnswerText(e.target.value);
+  };
 
-  const inputWordText =(e: { target: { value: React.SetStateAction<string>; }; }) =>{
-    setWord(e.target.value)
-  }
+  const handleAddClick = () => {
+    axios
+      .post("http://localhost:5000/post", {
+        word: wordText,
+        answer: answerText,
+      })
+      .then((response) => {
+        setList([
+          ...list,
+          {
+            category: "未分類",
+            id: response.data.id,
+            word: wordText,
+            answer: answerText,
+          },
+        ]);
+        setWordText("");
+        setAnswerText("");
+      })
+      .catch((error) =>
+        console.log("追加のPOSTリクエストが失敗しました。", error)
+      );
+  };
 
-  const inputAnswerText = (e: { target: { value: React.SetStateAction<string>; }; }) =>{
-    setAnswer(e.target.value)
-  }
+  const handleDeleteClick = (id: number, indexDelete: number) => {
+    axios
+      .post("http://localhost:5000/delete", {
+        id: id,
+      })
 
-  const handleAddClick = () => {  
-    axios.post('http://localhost:5000/post',{
-      word:word,
-      answer:answer
-    })
-    .then(response => {
-      setList([...list, { id: response.data.id, wordText: word, answerText: answer }]);
-      setWord('');
-      setAnswer('');
-    })
-    .catch(error => console.log('POSTリクエストが失敗しました。',error))
-  }
-
-  const handleDeleteClick = (id: number,indexDelete:number) => {
-    axios.post('http://localhost:5000/delete',{
-      id: id
-    })
-    
-    
-    .then(response => {
-      const newList = list.filter((_,index) => index !== indexDelete)
-      setList(newList)
-      console.log('deleteのPOSTリクエストが成功しました。',response.data)})
-    .catch(error => console.log('deleteのPOSTリクエストが成功しました。',error))
-  }
+      .then((response) => {
+        const newList = list.filter((_, index) => index !== indexDelete);
+        setList(newList);
+        console.log("deleteのPOSTリクエストが成功しました。", response.data);
+      })
+      .catch((error) =>
+        console.log("deleteのPOSTリクエストが成功しました。", error)
+      );
+  };
 
   return (
     <div>
       <h3> 単語帳編集画面</h3>
-      Q.<input type='text' value={word} onChange={inputWordText}/>
-      A.<input type='textarea' value={answer} onChange={inputAnswerText}/>
+      Q.
+      <input type="text" value={wordText} onChange={inputWordText} />
+      A.
+      <input type="text" value={answerText} onChange={inputAnswerText} />
       <button onClick={handleAddClick}>追加</button>
-      
-
       <ul>
-        {list.map((item, index)=> (
-          <li key={index}>
-             Q: {item.wordText} - A: {item.answerText}
-             <button onClick={() => handleDeleteClick(item.id,index)}>削除</button>
+        {list.map((item, index) => (
+          <li key={item.id}>
+            Q: {item.word} - A: {item.answer}
+            <button onClick={() => handleDeleteClick(item.id, index)}>
+              削除
+            </button>
           </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }
 
-export default List
+export default List;
