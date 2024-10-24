@@ -1,20 +1,34 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import React from "react";
+import { CardItem } from "./Cards";
 
-function QuestionCard() {
+type ListProps = CardItem[];
+
+type ClickCardLengthProps = number;
+
+type QuestionItemProps = {
+  category: string;
+  id: number;
+  word: string;
+  answer: string;
+  list: ListProps;
+  clickCardLength: ClickCardLengthProps;
+  handleClickCard: () => void;
+};
+
+function QuestionCard(props: QuestionItemProps) {
+  const { list, clickCardLength, handleClickCard } = props;
+
+  const questionCardDisplay = () => {
+    const index = Math.floor(clickCardLength / 2);
+    if (index < list.length) {
+      return list[index].word;
+    } else {
+      return "終わり";
+    }
+  };
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <Card
-        sx={{ minWidth: 275, width: 400, height: 200 }}
-        // onClick={handleClickCard}
-      >
+    <div>
+      <Card className="card" sx={{ minWidth: 275, width: 400, height: 200 }}>
         <CardContent
           sx={{
             display: "flex",
@@ -33,7 +47,12 @@ function QuestionCard() {
               whiteSpace: "normal",
               maxWidth: "100%",
             }}
-          ></Typography>
+          >
+            Q.{questionCardDisplay()}
+          </Typography>
+          <button className="button" onClick={handleClickCard}>
+            答え
+          </button>
         </CardContent>
       </Card>
     </div>

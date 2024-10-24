@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 type ListItem = {
-  class: string;
+  category: string;
   id: number;
   word: string;
   answer: string;
@@ -12,7 +12,7 @@ function List() {
   const [wordText, setWordText] = useState<string>("");
   const [answerText, setAnswerText] = useState<string>("");
   const [list, setList] = useState<ListItem[]>([
-    { class: "未分類", id: 0, word: "単語", answer: "答え" },
+    { category: "未分類", id: 0, word: "単語", answer: "答え" },
   ]);
 
   useEffect(() => {
@@ -20,45 +20,14 @@ function List() {
       .post("http://localhost:5000/")
       .then((response) => {
         console.log("レスポンスデータ", response.data);
-        const filteredList: ListItem[] = response.data
-          // .reduce((acc: { word: string; answer: string }[], item: ListItem) => {
-          //   acc[item.id] = { word: item.wordText, answer: item.answerText };
-          // })
-          .filter((item: ListItem) => item.id && item.word && item.answer);
-        // .map((item: ListItem) => ({
-        //   id: item.id,
-        //   wordText: item.wordText,
-        //   answerText: item.answerText,
-        // }));
+        const filteredList: ListItem[] = response.data.filter(
+          (item: ListItem) => item.id && item.word && item.answer
+        );
         console.log(filteredList);
         setList(filteredList);
       })
       .catch((error) => console.error("データ取得に失敗しました", error));
   }, []);
-
-  // 取得したデータをリストにセット
-  // const listItem: ListItem = {
-  //   answer: "hot",
-  //   class: null,
-  //   id: 17,
-  //   word: "熱い",
-  // };
-  // const listItem: ListItem = {
-  //   id: 17,
-  //   wordText: "熱い",
-  //   answerText: "hot",
-  // };
-
-  // setList(
-  //   response.data.map(
-  //     (item: ListItem) => ({
-  //       id: item.id,
-  //       wordText: item.wordText,
-  //       answerText: item.answerText,
-  //     }),
-  //     console.log("POSTリクエストが成功しました。", response.data)
-  //   )
-  //
 
   const inputWordText = (e: {
     target: { value: React.SetStateAction<string> };
@@ -82,7 +51,7 @@ function List() {
         setList([
           ...list,
           {
-            class: "未分類",
+            category: "未分類",
             id: response.data.id,
             word: wordText,
             answer: answerText,

@@ -18,7 +18,7 @@ function App() {
       <BrowserRouter>
         <Link to="/">Home</Link> | <Link to="/edit">Edit</Link>
         <Routes>
-          <Route path="/" element={<Cards class={"未分類"} id={0} word={""} answer={""}/>} />
+          <Route path="/" element={<Cards category={"未分類"} id={0} word={""} answer={""}/>} />
           <Route path="/edit" element={<List />} />
         </Routes>
       </BrowserRouter>
